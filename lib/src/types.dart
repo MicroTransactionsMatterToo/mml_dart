@@ -7,6 +7,7 @@ class MMLComment {
 
 /*  BEGIN MMLMetadata */
 
+/// Base class for all MML Metadata
 class MMLMetadata {
   String key;
   String value;
@@ -14,6 +15,7 @@ class MMLMetadata {
   MMLMetadata(this.key, this.value);
 }
 
+/// Represents the `#title` metadata in MML
 class MMLTitle extends MMLMetadata {
   String name;
 
@@ -22,6 +24,7 @@ class MMLTitle extends MMLMetadata {
         super(key, value);
 }
 
+/// Represents the `#copyright` metadata in MML
 class MMLCopyright extends MMLMetadata {
   String copyrightNotice;
 
@@ -35,6 +38,7 @@ class MMLCopyright extends MMLMetadata {
 
 /* BEGIN Syntax */
 
+/// Represents a single note in MML
 class MMLNote {
   String noteName;
   num volume;
@@ -46,22 +50,34 @@ class MMLNote {
   MMLNote(this.noteName, this.volume, this.length, this.octave);
 }
 
-
+/// An MML `v` volume change event
 class MMLVolume {
   num volume;
 
   MMLVolume(this.volume);
 }
 
+/// An MML `o` octave change event
 class MMLOctave {
   num octave;
 
   MMLOctave(this.octave);
 }
+
+/// An MML `l` length change event
+class MMLLength {
+  num length;
+
+  MMLLength(this.length);
+}
+
 /* END Syntax */
 
 /* BEGIN Track Objects */
 
+/// A collection of events and notes
+///
+/// Each track contains all the events and notes corresponding to it
 class MMLTrack {
   List<dynamic> notes;
 }
