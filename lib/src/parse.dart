@@ -1,6 +1,9 @@
 import 'types.dart';
 
-
+/// Parses MML metadata
+///
+/// [input] is expected to be an array of strings, split by `\n` or `\r\n`
+/// [rval] is the parse MMLMetadata child class that corresponds to the metadata given
 MMLMetadata parseMetadata(List<String> input) {
   // Take the current line
   var currentLine = input[0];
@@ -16,12 +19,12 @@ MMLMetadata parseMetadata(List<String> input) {
   String key = metaPairs[0];
   String value = metaPairs[1];
 
-  switch(key) {
+  switch (key) {
     case "title":
-      rval = new MMLTitle(value);
+      rval = new MMLTitle(key, value);
       break;
     case "copyright":
-      rval = new MMLCopyright(value);
+      rval = new MMLCopyright(key, value);
       break;
     default:
       rval = new MMLMetadata(key, value);
