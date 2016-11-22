@@ -65,6 +65,9 @@ class MMLParser {
     }
   }
 
+  /// Parses the given string, assuming it to be a valid MML note
+  ///
+  /// Valid MMLNotes will match this RegExp `[abcdefg]{1}[+|-]{0,1}\d*[.]*`
   parseNote(String input) {
     String note = input[0];
     Iterable<Match> dots = input.allMatches(".");
