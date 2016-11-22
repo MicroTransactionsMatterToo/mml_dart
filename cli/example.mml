@@ -1,0 +1,74 @@
+#title "bottakuri-shouten(ORIGINAL)PLAY3->PMD->MIDI"
+#copyright "Music Composed by Kenkichi Motoi 1997 Wikimedia version 2012"
+#timebase 48
+
+$g k100
+$h k100
+
+T C12 BT4,4 t150
+T EX x41,x10,x42,x12,{x40,0,x7f,0},xf7 r48 ; GS-RESET
+T EX x41,x10,x42,x12,{x40,1,x39,6},xf7     ; GS-Chorus #6
+
+G C1
+H C2
+I C3
+
+GHI  r8 H0,0@45  r8   o3 l8   ; Melody 1
+G p64 v110
+H p80 v60
+I p32 v60
+
+H <
+I >
+
+G [rrrr rrrr rrrr rrrr
+HI [cgcg cgcg cgcg cgcg
+
+G rrrr rrrr rrrr rrrr
+HI cgcg cgcg cgcg >c<ceg
+
+G >e<rrr rr>ef< rrrr >d<rrr
+HI >e<gcg cg>ef< dada >d<g+c+g+
+
+G >e<rrr rrrr rrrr rrrr >e<rrr
+HI >e<gcg cgcg cgcg >c<gcg >e<gcg
+
+G rr>ef< rrrr >d<rrr >e<rrr
+HI cg>ef< dada >d<g+c+g+ >e<gcg
+
+G rrrr rrrr rrrr brrr
+HI cgcg cgcg >c<gcg b<b>d<b>
+
+G rrbg+ rarb r>crd erfr
+HI d<b>bg+ <d>a<d+>b <f+>>c<<g>>d e<e>f<f>
+G erd+
+HI e<e>d+
+
+GHI k32,2[d32]24
+G $g
+HI $h
+
+G <ab>c c+<rrr
+HI <ab>c c+<c+c+c+
+
+G rb>cc+ d<rrr r>def g
+HI c+b>cc+ d<ddd d>def g
+GHI H0,0 @44
+H <
+I >
+GHI <<gb>c
+GHI gfed fedc edc<b
+GHI l16abababab abababab gagagaga gagagaga
+GHI g2
+GHI r8
+H >
+I <
+GHI @45
+GHI l8>gab]2
+GHI k110,-5,0
+
+G rrrr rrrr rrrr rrrr
+HI cgcg cgcg cgcg cgcg
+
+G rrrr rrrr rrrr rrrr
+HI cgcg cgcg cgcg >c<ceg

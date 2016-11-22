@@ -19,3 +19,9 @@ enum octaves {
   six,
   seven
 }
+
+enum articulationTypes {
+  N,
+  S,
+  L
+}

@@ -1,5 +1,14 @@
+import 'enums.dart';
+
+
 /// Maximum range of notes playable
 const int noteRange = 83;
+
+/// Default note length
+const int defaultNoteLength = 4;
+
+/// Default octave
+const num defaultOctave = 4;
 
 /// Number of octaves available
 const int octaveRange = 7;

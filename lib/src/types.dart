@@ -1,3 +1,4 @@
+import 'enums.dart';
 
 class MMLComment {
   String text;
@@ -13,6 +14,10 @@ class MMLMetadata {
   String value;
 
   MMLMetadata(this.key, this.value);
+
+  toString() {
+    return "${this.key} : ${this.value}";
+  }
 }
 
 /// Represents the `#title` metadata in MML
@@ -22,6 +27,10 @@ class MMLTitle extends MMLMetadata {
   MMLTitle(String key, String value)
       : name = value,
         super(key, value);
+
+  toString() {
+    return "Title : ${this.name}";
+  }
 }
 
 /// Represents the `#copyright` metadata in MML
@@ -31,6 +40,10 @@ class MMLCopyright extends MMLMetadata {
   MMLCopyright(String key, String value)
       : copyrightNotice = value,
         super(key, value);
+
+  toString() {
+    return "Copyright: ${this.copyrightNotice}";
+  }
 }
 
 
@@ -46,8 +59,22 @@ class MMLNote {
   num octave;
   bool isSharp;
   bool isFlat;
+  int dottedFactor;
 
-  MMLNote(this.noteName, this.volume, this.length, this.octave);
+  MMLNote(this.noteName, this.volume, this.length, this.octave,
+      this.dottedFactor, this.isFlat, this.isSharp);
+
+  String toString() {
+    String accidental;
+    if (this.isSharp) {
+      accidental = "♯";
+    }
+    if (this.isFlat) {
+      accidental = "♭";
+    }
+    String outString = "Note: ${noteName.toUpperCase()}${octave}${accidental}, Length: ${length}";
+    return outString;
+  }
 }
 
 /// An MML `v` volume change event
@@ -69,6 +96,34 @@ class MMLLength {
   num length;
 
   MMLLength(this.length);
+}
+
+/// An articulation type change
+class MMLArticulation {
+  articulationTypes type;
+
+  /// Generates a new [MMLArticulation] from a string
+  MMLArticulation.fromString(String value) {
+    switch (value) {
+      case 'n':
+        this.type = articulationTypes.N;
+        break;
+      case 's':
+        this.type = articulationTypes.S;
+        break;
+      case 'l':
+        this.type = articulationTypes.L;
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+class MMLPlayNote {
+  int noteNumber;
+
+  MMLPlayNote(this.noteNumber);
 }
 
 /* END Syntax */
