@@ -1,6 +1,7 @@
 import 'types.dart';
 import 'enums.dart';
 import 'constants.dart';
+import 'errors.dart';
 
 
 class MMLParser {
@@ -22,8 +23,8 @@ class MMLParser {
     this.currentNoteLength = 4;
     this.currentTempo = 120;
     this.currentVolume = 12;
-    this.author = "Unkown";
-    this.copyright = null;
+    this.author = "Unknown";
+    this.copyright = "";
     this.title = "Untitled";
     this.notes = new List<MMLNote>();
     this.mmlEvents = new List<dynamic>();
@@ -73,7 +74,7 @@ class MMLParser {
     Iterable<Match> dots = input.allMatches(".");
     RegExp semitoneRaisesRegExp = new RegExp("[-|+|#]");
     Match semitoneRaises = semitoneRaisesRegExp.firstMatch(input);
-    RegExp lengthRegExp = new RegExp("(\d+)");
+    RegExp lengthRegExp = new RegExp("([0-9]+)");
     Match lengthMatches = lengthRegExp.firstMatch(input);
     int finalLength = this.currentNoteLength;
     if (lengthRegExp.hasMatch(input)) {
@@ -86,7 +87,6 @@ class MMLParser {
     if (semitoneRaisesRegExp.hasMatch(input)) {
       tempSemitones = semitoneRaises.group(0);
     }
-    print(tempSemitones);
     bool isFlat = false;
     bool isSharp = false;
     switch (tempSemitones) {
@@ -107,8 +107,157 @@ class MMLParser {
 
     // Build new MMLNote
     var temp = new MMLNote(
-        note, this.currentVolume, finalLength,  this.currentOctave, dotFactor, isFlat, isSharp);;
-    print(temp);
-    print(temp.isSharp);
+        note,
+        this.currentVolume,
+        finalLength,
+        this.currentOctave,
+        dotFactor,
+        isFlat,
+        isSharp);
+    this.add(temp);
+  }
+
+  parseRest(String input) {
+    Iterable<Match> dots = input.allMatches(".");
+    RegExp lengthRegExp = new RegExp("[0-9]+");
+    int finalLength = this.currentNoteLength;
+    if (lengthRegExp.hasMatch(input)) {
+      finalLength = int.parse(lengthRegExp.firstMatch(input).group(0));
+    }
+    var temp = new MMLRest(finalLength, dots.length);
+    this.add(temp);
+  }
+
+  parseEvent(String input) {
+    dynamic appendValue;
+    // First item will always be the event type
+    String eventType = input[0];
+    num eventValue;
+    RegExp eventRegexp = new RegExp("[0-9]+");
+    if (eventRegexp.hasMatch(input)) {
+      print(eventRegexp.firstMatch(input).group(0));
+      eventValue = num.parse(eventRegexp.firstMatch(input).group(0));
+    } else {
+      eventValue = 0;
+    }
+    switch (eventType) {
+      case "t":
+        appendValue = new MMLTempo(
+            eventValue
+        );
+        this.currentTempo = eventValue;
+        this.add(appendValue);
+        break;
+      case "v":
+        appendValue = new MMLVolume(
+            eventValue
+        );
+        this.currentVolume = eventValue;
+        this.add(appendValue);
+        break;
+      case "l":
+        appendValue = new MMLLength(
+            eventValue
+        );
+        this.currentNoteLength = eventValue;
+        this.add(appendValue);
+        break;
+      case "o":
+        if (eventValue > 8 || eventValue < 1) {
+          throw new OctaveError("Octave ${eventValue} is not valid");
+        }
+        appendValue = new MMLOctave(
+            eventValue
+        );
+        this.currentOctave = eventValue;
+        this.add(appendValue);
+        break;
+      case ">":
+        if (this.currentOctave + 1 > 8) {
+          throw new OctaveError(
+              "Octave ${this.currentOctave + 1} is not valid");
+        }
+        appendValue = new MMLOctave(
+            this.currentOctave + 1
+        );
+        this.currentOctave += 1;
+        this.add(appendValue);
+        break;
+      case "<":
+        if (this.currentOctave - 1 < 1) {
+          throw new OctaveError(
+              "Octave ${this.currentOctave - 1} is not valid");
+        }
+        appendValue = new MMLOctave(
+            this.currentOctave - 1
+        );
+        this.currentOctave -= 1;
+        this.add(appendValue);
+        break;
+    }
+  }
+
+  parseRaw(String input) {
+    RegExp mmlRegExp = new RegExp(
+        r"([abcdefg]{1}[+|-]?[0-9]*[.]*)|([ovt][0-9]+)|([<>])|(r[0-9]*[.]*)|(#.*$)",
+        multiLine: true);
+    Iterable<Match> matches = mmlRegExp.allMatches(input);
+    print(matches.length);
+    for (dynamic match in matches) {
+      List<String> groups = match.groups([1, 2, 3, 4, 5]);
+      print(groups);
+      if (groups[0] != null) {
+        print("note");
+        this.parseNote(groups[0]);
+      }
+      else if (groups[1] != null) {
+        this.parseEvent(groups[1]);
+      }
+      else if (groups[2] != null) {
+        this.parseEvent(groups[2]);
+      }
+      else if (groups[3] != null) {
+        this.parseRest(groups[3]);
+      }
+      else if (groups[4] != null) {
+        this.parseMetadata(groups[4]);
+      }
+    }
+  }
+
+  add(dynamic item) {
+    if (item is MMLNote) {
+      this.notes.add(item);
+      this.mmlEvents.add(item);
+    } else {
+      this.mmlEvents.add(item);
+    }
+  }
+
+  // Array methods
+  dynamic elementAt(int index) {
+    if (index is! int) throw new ArgumentError.notNull("index");
+    RangeError.checkNotNegative(index, "index");
+    int elementIndex = 0;
+    for (dynamic element in this.mmlEvents) {
+      if (index == elementIndex) return element;
+      elementIndex++;
+    }
+    throw new RangeError.index(
+        index, this.mmlEvents, "index", null, elementIndex);
+  }
+
+  // Built-ins
+  String toString() {
+    String returnValue = "${this.title} by ${this.author}, ${this.copyright}";
+    return returnValue;
+  }
+
+  List<dynamic> toList({bool growable: true}) {
+    return new List.from(this.mmlEvents, growable: growable);
+  }
+
+  Set<dynamic> toSet() {
+    return new Set.from(this.mmlEvents);
   }
 }

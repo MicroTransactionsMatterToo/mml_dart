@@ -1,5 +1,5 @@
 name: mml_dart
-version: 0.0.2
+version: 0.0.3
 description: A package for parsing MML (Music Macro Language) files in Dart
 author: Ennis Massey <ennisbaradine@gmail.com>
 homepage: https://github.com/MicroTransactionsMatterToo/mml_dart

@@ -4,6 +4,8 @@ class MMLComment {
   String text;
 
   MMLComment(this.text);
+
+  String toString() => text;
 }
 
 /*  BEGIN MMLMetadata */
@@ -72,9 +74,17 @@ class MMLNote {
     if (this.isFlat) {
       accidental = "♭";
     }
-    String outString = "Note: ${noteName.toUpperCase()}${octave}${accidental}, Length: ${length}";
+    String outString = "Note: ${noteName
+        .toUpperCase()}${octave}${accidental != null ? accidental : ""}, Length: ${length}";
     return outString;
   }
+}
+
+class MMLRest {
+  num length;
+  int dottedFactor;
+
+  MMLRest(this.length, this.dottedFactor);
 }
 
 /// An MML `v` volume change event
@@ -82,6 +92,8 @@ class MMLVolume {
   num volume;
 
   MMLVolume(this.volume);
+
+  String toString() => "Volume change to ${volume}";
 }
 
 /// An MML `o` octave change event
@@ -89,6 +101,8 @@ class MMLOctave {
   num octave;
 
   MMLOctave(this.octave);
+
+  String toString() => "Octave change to ${octave}";
 }
 
 /// An MML `l` length change event
@@ -96,6 +110,14 @@ class MMLLength {
   num length;
 
   MMLLength(this.length);
+}
+
+class MMLTempo {
+  num tempo;
+
+  MMLTempo(this.tempo);
+
+  String toString() => "Tempo change to ${tempo}";
 }
 
 /// An articulation type change
